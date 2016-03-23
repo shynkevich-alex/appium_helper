@@ -1,0 +1,14 @@
+group 'appium_helper'
+version '1.0'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'io.appium:java-client:3.4.0'
+}
