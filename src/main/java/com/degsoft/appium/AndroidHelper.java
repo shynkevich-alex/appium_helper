@@ -1,6 +1,7 @@
 package com.degsoft.appium;
 
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.IOSElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;

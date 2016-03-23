@@ -5,10 +5,15 @@ import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
 
+import java.awt.*;
+import java.awt.image.PixelGrabber;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.degsoft.utils.LoggerUtil.*;
 
@@ -31,45 +36,6 @@ public abstract class AppiumHelper {
     /*
            Find elements methods
     */
-
-    public WebElement findElement(By byElement) {
-        return findElement(byElement, true);
-    }
-
-    public WebElement findElement(By byElement, boolean isElementDisplayed) {
-        WebElement element = null;
-        try {
-            element = appiumDriver.findElement(byElement);
-        } catch (Exception e) {
-            return null;
-        }
-        if (isElementDisplayed) {
-            if (!isElementDisplayed(element)) {
-                return null;
-            }
-        }
-        return element;
-    }
-
-    public WebElement findElement(WebElement parent, By byElement) {
-        return findElement(parent, byElement, true);
-    }
-
-    public WebElement findElement(WebElement parent, By byElement, boolean isElementDisplayed) {
-        WebElement element = null;
-        try {
-            element = parent.findElement(byElement);
-
-            if (isElementDisplayed) {
-                if (!element.isDisplayed()) {
-                    return null;
-                }
-            }
-        } catch (Exception e) {
-            return null;
-        }
-        return element;
-    }
 
     public ArrayList<WebElement> findElements(By byElement) {
         return findElements(byElement, true);
@@ -132,6 +98,70 @@ public abstract class AppiumHelper {
         return null;
     }
 
+    public ArrayList<WebElement> findElementsById(String className, String id, boolean isDisplayed) {
+        List<WebElement> elements = this.findElementsById(id, isDisplayed);
+        ArrayList<WebElement> webElements = new ArrayList<>();
+
+        if (elements == null || elements.isEmpty() || elements.size() == 0)
+            return null;
+        else {
+            for (WebElement element : elements) {
+                if (element.getTagName().equals(className)) {
+                    webElements.add(element);
+                }
+            }
+        }
+        return webElements;
+    }
+
+    public List<WebElement> findElementsByText(String text){
+        return findElementsByText(text, true);
+    }
+
+    public abstract List<WebElement> findElementsByText(String text, boolean isElementDisplayed);
+
+    public abstract List<WebElement> findElementsById(String id, boolean isDisplayed);
+
+    public WebElement findElement(By byElement) {
+        return findElement(byElement, true);
+    }
+
+    public WebElement findElement(By byElement, boolean isElementDisplayed) {
+        WebElement element = null;
+        try {
+            element = appiumDriver.findElement(byElement);
+        } catch (Exception e) {
+            return null;
+        }
+        if (isElementDisplayed) {
+            if (!isElementDisplayed(element)) {
+                return null;
+            }
+        }
+        return element;
+    }
+
+    public WebElement findElement(WebElement parent, By byElement) {
+        return findElement(parent, byElement, true);
+    }
+
+    public WebElement findElement(WebElement parent, By byElement, boolean isElementDisplayed) {
+        WebElement element = null;
+        try {
+            element = parent.findElement(byElement);
+
+            if (isElementDisplayed) {
+                if (!element.isDisplayed()) {
+                    return null;
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return element;
+    }
+
+
     public WebElement findElementByText(String text) {
         return findElementByText(text, true);
     }
@@ -150,19 +180,11 @@ public abstract class AppiumHelper {
 
     public abstract WebElement findElementByText(String className, String text, boolean isElementDisplayed);
 
-    public List<WebElement> findElementsByText(String text){
-        return findElementsByText(text, true);
-    }
-
-    public abstract List<WebElement> findElementsByText(String text, boolean isElementDisplayed);
-
-    public WebElement findElementByAccessibilityId(String id) {
+    public WebElement findElementById(String id) {
         return findElementById(id, true);
     }
 
     public abstract WebElement findElementById(String id, boolean isElementDisplayed);
-
-    public abstract List<WebElement> findElementsById(String id, boolean isDisplayed);
 
     public WebElement findElementById(String className, String id) {
         return findElementById(className, id, true);
@@ -181,22 +203,6 @@ public abstract class AppiumHelper {
             }
         }
         return null;
-    }
-
-    public ArrayList<WebElement> findElementsById(String className, String id, boolean isDisplayed) {
-        List<WebElement> elements = this.findElementsById(id, isDisplayed);
-        ArrayList<WebElement> webElements = new ArrayList<>();
-
-        if (elements == null || elements.isEmpty() || elements.size() == 0)
-            return null;
-        else {
-            for (WebElement element : elements) {
-                if (element.getTagName().equals(className)) {
-                    webElements.add(element);
-                }
-            }
-        }
-        return webElements;
     }
 
     /*
@@ -295,27 +301,6 @@ public abstract class AppiumHelper {
         return element;
     }
 
-    public boolean waitGoneElementByText(final String name, long timeMs) {
-        return waitGoneElementByText(name, timeMs, true);
-    }
-
-    public boolean waitGoneElementByText(final String name, long timeMs, boolean isElementDisplayed) {
-        long waiterStartTime = System.currentTimeMillis();
-
-        WebElement element = null;
-        do {
-            element = findElementByText(name, isElementDisplayed);
-
-            if (System.currentTimeMillis() - waiterStartTime >= timeMs) {
-                printDebug("element by name: \"" + name + "\" exist.");
-                return false;
-            }
-
-        } while (element != null);
-
-        return true;
-    }
-
     public WebElement waitForElementById(String id, long timeMs) {
         return waitForElementById(id, timeMs, true);
     }
@@ -377,6 +362,48 @@ public abstract class AppiumHelper {
             }
         }
         return element;
+    }
+
+    public boolean waitGoneElement(final By by, long timeMs) {
+        return waitGoneElement(by, timeMs, true);
+    }
+
+    public boolean waitGoneElement(final By by, long timeMs, boolean isElementDisplayed) {
+        long waiterStartTime = System.currentTimeMillis();
+        WebElement element = null;
+
+        do {
+            element = findElement(by, isElementDisplayed);
+
+            if (System.currentTimeMillis() - waiterStartTime >= timeMs) {
+                printDebug("element by: \"" + by.toString() + "\" exist.");
+                return false;
+            }
+
+        } while (element != null);
+
+        return true;
+    }
+
+    public boolean waitGoneElementByText(final String name, long timeMs) {
+        return waitGoneElementByText(name, timeMs, true);
+    }
+
+    public boolean waitGoneElementByText(final String name, long timeMs, boolean isElementDisplayed) {
+        long waiterStartTime = System.currentTimeMillis();
+
+        WebElement element = null;
+        do {
+            element = findElementByText(name, isElementDisplayed);
+
+            if (System.currentTimeMillis() - waiterStartTime >= timeMs) {
+                printDebug("element by name: \"" + name + "\" exist.");
+                return false;
+            }
+
+        } while (element != null);
+
+        return true;
     }
 
     /*
@@ -457,16 +484,6 @@ public abstract class AppiumHelper {
     /*
     Getters of attribute
      */
-    public String getTextOfElement(WebElement element) {
-        String text = "";
-
-        try {
-            text = element.getText();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return text;
-    }
 
     public boolean isElementSelected(WebElement element) {
         boolean isSelected = false;
@@ -477,13 +494,6 @@ public abstract class AppiumHelper {
         }
 
         return isSelected;
-    }
-
-    public Point getCenter(WebElement element) {
-
-        Point upperLeft = element.getLocation();
-        Dimension dimensions = element.getSize();
-        return new Point(upperLeft.getX() + dimensions.getWidth() / 2, upperLeft.getY() + dimensions.getHeight() / 2);
     }
 
     public boolean isElementEnabled(WebElement webElement) {
@@ -500,6 +510,23 @@ public abstract class AppiumHelper {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    //todo check method
+    public ArrayList<WebElement> getChildrenOfElement(WebElement element, boolean isElementsDisplayed) {
+        String parentXpath = getElementXpath(element);
+
+        String xpath = parentXpath + "/descendant::*";
+        printDebug("##### FIND CHILD BY XPATH WITH NAME LOCATOR: " + xpath);
+
+        return findElements(By.xpath(xpath), isElementsDisplayed);
+    }
+
+    public Point getCenter(WebElement element) {
+
+        Point upperLeft = element.getLocation();
+        Dimension dimensions = element.getSize();
+        return new Point(upperLeft.getX() + dimensions.getWidth() / 2, upperLeft.getY() + dimensions.getHeight() / 2);
     }
 
     public Dimension getSizeOfElement(WebElement webElement) {
@@ -547,6 +574,39 @@ public abstract class AppiumHelper {
         return "";
     }
 
+    public String getTextOfElement(WebElement element) {
+        String text = "";
+
+        try {
+            text = element.getText();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return text;
+    }
+
+    public static String getRandomString(int length) {
+        Random rnd = new Random();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt(rnd.nextInt("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".length())));
+        }
+        return sb.toString();
+    }
+
+    public static int getRandomNumber(int max) {
+        if (max <= 0)
+            return 0;
+        int random = (int) (Math.random() * max + 1);
+        return random;
+    }
+
+    public static double getRandomNumber(double start, double end) {
+        double random = new Random().nextDouble();
+        double result = start + (random * (end - start));
+        return result;
+    }
+
     /*
     Enter text to element
      */
@@ -556,6 +616,10 @@ public abstract class AppiumHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void setValueInElement(WebElement webElement, String value){
+        sendKeysToWebElement(webElement, value);
     }
 
     /*
@@ -588,4 +652,66 @@ public abstract class AppiumHelper {
   Use carefully.
    */
    protected abstract String getElementXpath(WebElement parent);
+
+  /*
+    Info
+     */
+
+    public void printElementInfo(WebElement element){
+        if (element == null){
+            printDebug("Provided Element is NULL");
+        }
+
+        printDebug("**********\n" +
+                "TagName : " + getTagNameOfWebElement(element) + " \n" +
+                "Value (text) : " + getTextOfWebElement(element) + " \n" +
+                "Label : " + getAttributeOfWebElement(element, "label") + " \n" +
+                "Is Displayed : " + isElementDisplayed(element) + " \n" +
+                "Location : " + "x=" + getLocationOfElement(element).getX() + " y=" + getLocationOfElement(element).getY() + " \n" +
+                "Size : " + "width=" + getSizeOfElement(element).getWidth() + " height=" + getSizeOfElement(element).getHeight() + " \n" +
+                "\n************");
+    }
+
+    /***
+     * comparing 2 images
+     * method arguments should be string value of the file path
+     * that should consist of /data/local/tmp/filename.png
+     * where filename.png is the name of your screenshot image
+     ***/
+    public boolean compareTwoImages(String img1path, String img2path) {
+        if (!new File(img1path).exists() || !new File(img2path).exists()) {
+            printError("Some of screenshots not found:\n" +           img1path + "\n" + img2path);
+            return false;
+        }
+        Image image1 = Toolkit.getDefaultToolkit().getImage(img1path);
+        Image image2 = Toolkit.getDefaultToolkit().getImage(img2path);
+
+        try {
+            PixelGrabber grab1 = new PixelGrabber(image1, 0, 0, -1, -1, false);
+            PixelGrabber grab2 = new PixelGrabber(image2, 0, 0, -1, -1, false);
+            int[] data1 = null;
+
+            if (grab1.grabPixels()) {
+                int width = grab1.getWidth();
+                int height = grab1.getHeight();
+                data1 = new int[width * height];
+                data1 = (int[]) grab1.getPixels();
+            }
+
+            int[] data2 = null;
+
+            if (grab2.grabPixels()) {
+                int width = grab2.getWidth();
+                int height = grab2.getHeight();
+                data2 = new int[width * height];
+                data2 = (int[]) grab2.getPixels();
+            }
+            printInfo("Pixels equal: " + java.util.Arrays.equals(data1, data2));
+            return java.util.Arrays.equals(data1, data2);
+
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
+        return false;
+    }
 }

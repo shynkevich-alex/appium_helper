@@ -1,6 +1,7 @@
 package com.degsoft.appium;
 
 import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.ios.IOSElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
@@ -149,6 +150,19 @@ public class IOSHelper extends AppiumHelper {
     }
 
     /*
+    Enter text to element
+     */
+    public void setValueInElement(WebElement webElement, String value) {
+        try {
+            IOSElement iosElement = (IOSElement) webElement;
+            iosElement.setValue(value);
+        } catch (Exception e) {
+            printDebug("SET_VALUE method error");
+            e.printStackTrace();
+        }
+    }
+
+    /*
     WAITERS
      */
 
@@ -166,7 +180,7 @@ public class IOSHelper extends AppiumHelper {
                 printDebug("button by name: \"" + name + "\" was not found.");
                 return null;
             }
-            parent = findElementByAccessibilityId(parentAccessibilityId);
+            parent = findElementById(parentAccessibilityId);
 
             if (parent != null) {
                 element = findElementByText(parent, name, isElementDisplayed);
