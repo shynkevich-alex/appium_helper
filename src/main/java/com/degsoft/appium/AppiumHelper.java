@@ -512,12 +512,22 @@ public abstract class AppiumHelper {
         }
     }
 
-    //todo check method
+    //todo check methods
     public ArrayList<WebElement> getChildrenOfElement(WebElement element, boolean isElementsDisplayed) {
         String parentXpath = getElementXpath(element);
 
+        String xpath = parentXpath + "/child::*";
+        printDebug("##### FIND CHILDREN BY XPATH WITH NAME LOCATOR: " + xpath);
+
+        return findElements(By.xpath(xpath), isElementsDisplayed);
+    }
+
+    //Getting all cgildren
+    public ArrayList<WebElement> getDescChildrenOfElement(WebElement element, boolean isElementsDisplayed) {
+        String parentXpath = getElementXpath(element);
+
         String xpath = parentXpath + "/descendant::*";
-        printDebug("##### FIND CHILD BY XPATH WITH NAME LOCATOR: " + xpath);
+        printDebug("##### FIND DESCENDANT CHILDREN BY XPATH WITH NAME LOCATOR: " + xpath);
 
         return findElements(By.xpath(xpath), isElementsDisplayed);
     }
