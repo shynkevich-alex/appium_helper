@@ -51,6 +51,16 @@ public class AndroidHelper extends AppiumHelper {
         return findElements(By.xpath("//*[@text=\'" + text + "\']"), isElementDisplayed);
     }
 
+    @Override
+    public WebElement findElementById(String id, boolean isElementDisplayed) {
+        return findElement(By.id(id));
+    }
+
+    @Override
+    public List<WebElement> findElementsById(String id, boolean isDisplayed) {
+        return findElements(By.id(id), isDisplayed);
+    }
+
     /*
   Keyevent
   Sample: AndroidKeyCode.Enter

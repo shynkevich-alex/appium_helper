@@ -2,6 +2,7 @@ package com.degsoft.appium;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
+import io.appium.java_client.android.AndroidDriver;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 
@@ -154,9 +155,54 @@ public abstract class AppiumHelper {
     }
 
     public abstract List<WebElement> findElementsByText(String text, boolean isElementDisplayed);
+
+    public WebElement findElementByAccessibilityId(String id) {
+        return findElementById(id, true);
+    }
+
+    public abstract WebElement findElementById(String id, boolean isElementDisplayed);
+
+    public abstract List<WebElement> findElementsById(String id, boolean isDisplayed);
+
+    public WebElement findElementById(String className, String id) {
+        return findElementById(className, id, true);
+    }
+
+    public WebElement findElementById(String className, String id, boolean isDisplayed) {
+        List<WebElement> elements = this.findElementsById(id, isDisplayed);
+
+        if (elements == null || elements.isEmpty() || elements.size() == 0)
+            return null;
+        else {
+            for (WebElement element : elements) {
+                if (element.getTagName().equals(className)) {
+                    return element;
+                }
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<WebElement> findElementsById(String className, String id, boolean isDisplayed) {
+        List<WebElement> elements = this.findElementsById(id, isDisplayed);
+        ArrayList<WebElement> webElements = new ArrayList<>();
+
+        if (elements == null || elements.isEmpty() || elements.size() == 0)
+            return null;
+        else {
+            for (WebElement element : elements) {
+                if (element.getTagName().equals(className)) {
+                    webElements.add(element);
+                }
+            }
+        }
+        return webElements;
+    }
+
     /*
     Waiters
      */
+
     public WebElement waitForElement(final By by, long timeMs) {
         return waitForElement(by, timeMs, true);
     }
@@ -242,7 +288,6 @@ public abstract class AppiumHelper {
                 return null;
             }
             parent = findElement(parentBy);
-
             if (parent != null) {
                 element = findElementByText(parent, text, isElementDisplayed);
             }
@@ -270,6 +315,70 @@ public abstract class AppiumHelper {
 
         return true;
     }
+
+    public WebElement waitForElementById(String id, long timeMs) {
+        return waitForElementById(id, timeMs, true);
+    }
+
+    public WebElement waitForElementById(String id, long timeMs, boolean isElementDisplayed) {
+        long waiterStartTime = System.currentTimeMillis();
+        long startTime = 0;
+
+        WebElement element = this.findElementById(id, isElementDisplayed);
+        while (element == null) {
+            if (System.currentTimeMillis() - waiterStartTime >= timeMs) {
+                printDebug("element by AccessibilityId: \"" + id + "\" was not found.");
+                return null;
+            }
+            element = this.findElementById(id, isElementDisplayed);
+        }
+
+        return element;
+    }
+
+    public WebElement waitForElementById(String className, String id, long timeMs) {
+        return waitForElementById(className, id, timeMs, true);
+    }
+
+    public WebElement waitForElementById(String className, String id, long timeMs, boolean isElementDisplayed) {
+        long waiterStartTime = System.currentTimeMillis();
+        long startTime = 0;
+
+        WebElement element = findElementById(className, id, isElementDisplayed);
+        while (element == null) {
+            if (System.currentTimeMillis() - waiterStartTime >= timeMs) {
+                printDebug("element by AccessibilityId: \"" + id + "\" was not found.");
+                return null;
+            }
+            element = findElementById(className, id, isElementDisplayed);
+        }
+
+        return element;
+    }
+
+    public WebElement waitForElementByTextFromParent(final String parentClassName, final String parentId, final String name, long timeMs) {
+        return waitForElementByTextFromParent(parentClassName, parentId, name, timeMs, true);
+    }
+
+    public WebElement waitForElementByTextFromParent(final String parentClassName, final String parentId, final String name, long timeMs, boolean isElementDisplayed) {
+        long waiterStartTime = System.currentTimeMillis();
+        WebElement parent = null;
+        WebElement element = null;
+
+        while (element == null) {
+            if (System.currentTimeMillis() - waiterStartTime >= timeMs) {
+                printDebug("button by name: \"" + name + "\" was not found.");
+                return null;
+            }
+            parent = findElementById(parentClassName, parentId);
+
+            if (parent != null) {
+                element = findElementByText(parent, name, isElementDisplayed);
+            }
+        }
+        return element;
+    }
+
     /*
     Scrolls, Swipes
      */

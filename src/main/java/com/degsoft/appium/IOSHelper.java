@@ -107,7 +107,7 @@ public class IOSHelper extends AppiumHelper {
         return findElements(By.xpath("//*[@name=\'" + text + "\']"), isElementDisplayed);
     }
 
-    public List<WebElement> findElementsByAccessibilityId(String id, boolean isDisplayed) {
+    public List<WebElement> findElementsById(String id, boolean isDisplayed) {
         try {
 
             List<WebElement> webElements = new ArrayList<>();
@@ -133,46 +133,7 @@ public class IOSHelper extends AppiumHelper {
         return null;
     }
 
-    public WebElement findElementByAccessibilityId(String className, String id) {
-        return findElementByAccessibilityId(className, id, true);
-    }
-
-    public WebElement findElementByAccessibilityId(String className, String id, boolean isDisplayed) {
-        List<WebElement> elements = findElementsByAccessibilityId(id, isDisplayed);
-
-        if (elements == null || elements.isEmpty() || elements.size() == 0)
-            return null;
-        else {
-            for (WebElement element : elements) {
-                if (element.getTagName().equals(className)) {
-                    return element;
-                }
-            }
-        }
-        return null;
-    }
-
-    public ArrayList<WebElement> findElementsByAccessibilityId(String className, String id, boolean isDisplayed) {
-        List<WebElement> elements = findElementsByAccessibilityId(id, isDisplayed);
-        ArrayList<WebElement> webElements = new ArrayList<>();
-
-        if (elements == null || elements.isEmpty() || elements.size() == 0)
-            return null;
-        else {
-            for (WebElement element : elements) {
-                if (element.getTagName().equals(className)) {
-                    webElements.add(element);
-                }
-            }
-        }
-        return webElements;
-    }
-
-    public WebElement findElementByAccessibilityId(String id) {
-        return findElementByAccessibilityId(id, true);
-    }
-
-    public WebElement findElementByAccessibilityId(String id, boolean isElementDisplayed) {
+    public WebElement findElementById(String id, boolean isElementDisplayed) {
         WebElement element = null;
         try {
             element = appiumDriver.findElementByAccessibilityId(id);
@@ -190,46 +151,6 @@ public class IOSHelper extends AppiumHelper {
     /*
     WAITERS
      */
-
-    public WebElement waitForElementByAccessibilityId(String id, long timeMs) {
-        return waitForElementByAccessibilityId(id, timeMs, true);
-    }
-
-    public WebElement waitForElementByAccessibilityId(String id, long timeMs, boolean isElementDisplayed) {
-        long waiterStartTime = System.currentTimeMillis();
-        long startTime = 0;
-
-        WebElement element = findElementByAccessibilityId(id, isElementDisplayed);
-        while (element == null) {
-            if (System.currentTimeMillis() - waiterStartTime >= timeMs) {
-                printDebug("element by AccessibilityId: \"" + id + "\" was not found.");
-                return null;
-            }
-            element = findElementByAccessibilityId(id, isElementDisplayed);
-        }
-
-        return element;
-    }
-
-    public WebElement waitForElementByAccessibilityId(String className, String id, long timeMs) {
-        return waitForElementByAccessibilityId(className, id, timeMs, true);
-    }
-
-    public WebElement waitForElementByAccessibilityId(String className, String id, long timeMs, boolean isElementDisplayed) {
-        long waiterStartTime = System.currentTimeMillis();
-        long startTime = 0;
-
-        WebElement element = findElementByAccessibilityId(className, id, isElementDisplayed);
-        while (element == null) {
-            if (System.currentTimeMillis() - waiterStartTime >= timeMs) {
-                printDebug("element by AccessibilityId: \"" + id + "\" was not found.");
-                return null;
-            }
-            element = findElementByAccessibilityId(className, id, isElementDisplayed);
-        }
-
-        return element;
-    }
 
     public WebElement waitForElementByTextFromParent(final String parentAccessibilityId, final String name, long timeMs) {
         return waitForElementByTextFromParent(parentAccessibilityId, name, timeMs, true);
@@ -253,29 +174,5 @@ public class IOSHelper extends AppiumHelper {
         }
         return element;
     }
-
-    public WebElement waitForElementByTextFromParent(final String parentClassName, final String parentAccessibilityId, final String name, long timeMs) {
-        return waitForElementByTextFromParent(parentClassName, parentAccessibilityId, name, timeMs, true);
-    }
-
-    public WebElement waitForElementByTextFromParent(final String parentClassName, final String parentAccessibilityId, final String name, long timeMs, boolean isElementDisplayed) {
-        long waiterStartTime = System.currentTimeMillis();
-        WebElement parent = null;
-        WebElement element = null;
-
-        while (element == null) {
-            if (System.currentTimeMillis() - waiterStartTime >= timeMs) {
-                printDebug("button by name: \"" + name + "\" was not found.");
-                return null;
-            }
-            parent = findElementByAccessibilityId(parentClassName, parentAccessibilityId);
-
-            if (parent != null) {
-                element = findElementByText(parent, name, isElementDisplayed);
-            }
-        }
-        return element;
-    }
-
 
 }
