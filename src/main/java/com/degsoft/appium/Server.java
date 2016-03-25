@@ -7,10 +7,6 @@ import java.net.Socket;
 
 import static com.degsoft.utils.LoggerUtil.*;
 
-/*
-It is allowed now run appium server via capabilitys in 3.4.0 lib
- */
-@Deprecated
 public class Server extends Thread {
     private Process process;
     private String address;
@@ -20,6 +16,15 @@ public class Server extends Thread {
     public Server(String address, String port){
         this.address = address;
         this.serverPort = port;
+    }
+
+    /*
+It is allowed now run appium server via capabilitys in 3.4.0 lib
+ */
+    @Deprecated
+    @Override
+    public synchronized void start() {
+        super.start();
     }
 
     @Override
@@ -87,6 +92,7 @@ public class Server extends Thread {
         }
     }
 
+    @Deprecated
     public boolean isRunning() {
         try {
             int port = Integer.parseInt(serverPort);
@@ -98,7 +104,7 @@ public class Server extends Thread {
         return true;
     }
 
-    private void killAppium() throws IOException {
+    public void killAppium() throws IOException {
         String [] command;
         if(System.getProperty("os.name").toLowerCase().contains("windows")){
             command = new String []{"taskkill", "/F", "/IM", "node.exe"};
@@ -114,6 +120,7 @@ public class Server extends Thread {
                 }
     }
 
+    @Deprecated
     public void end() {
         if(process != null){
             try {

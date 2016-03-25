@@ -12,6 +12,9 @@ import io.appium.java_client.service.local.flags.ServerArgument;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 
 import static com.degsoft.utils.LoggerUtil.*;
@@ -38,6 +41,8 @@ public class Driver {
         try {
 
             if (isRunServer) {
+
+                new Server(serverAddress, serverPort).killAppium();
 
                 DesiredCapabilities serverCapabilities = new DesiredCapabilities();
                 serverCapabilities.setCapability(MobileCapabilityType.NO_RESET, "true");
