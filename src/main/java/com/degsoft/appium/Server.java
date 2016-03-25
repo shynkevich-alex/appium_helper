@@ -7,6 +7,10 @@ import java.net.Socket;
 
 import static com.degsoft.utils.LoggerUtil.*;
 
+/*
+It is allowed now run appium server via capabilitys in 3.4.0 lib
+ */
+@Deprecated
 public class Server extends Thread {
     private Process process;
     private String address;
