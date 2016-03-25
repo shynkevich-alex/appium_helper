@@ -2,7 +2,6 @@ package com.degsoft.appium;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
-import io.appium.java_client.android.AndroidDriver;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.Dimension;
@@ -512,7 +511,6 @@ public abstract class AppiumHelper {
         }
     }
 
-    //todo check methods
     public ArrayList<WebElement> getChildrenOfElement(WebElement element, boolean isElementsDisplayed) {
         String parentXpath = getElementXpath(element);
 
@@ -679,7 +677,7 @@ public abstract class AppiumHelper {
                 "Is Displayed : " + isElementDisplayed(element) + " \n" +
                 "Location : " + "x=" + getLocationOfElement(element).getX() + " y=" + getLocationOfElement(element).getY() + " \n" +
                 "Size : " + "width=" + getSizeOfElement(element).getWidth() + " height=" + getSizeOfElement(element).getHeight() + " \n" +
-                "\n************");
+                "       ************");
     }
 
     /***

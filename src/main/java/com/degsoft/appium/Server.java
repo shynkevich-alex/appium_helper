@@ -25,7 +25,6 @@ public class Server extends Thread {
                 System.out.println("Appium server is already running! Stopping it...");
 
                 killAppium();
-
                 while (isRunning()) ;
                 printDebug("Appium server stopped.");
             }
@@ -61,21 +60,21 @@ public class Server extends Thread {
                 BufferedReader read = new BufferedReader(new InputStreamReader(
                         process.getInputStream()));
 
-                String line = "";
-                while ((line = read.readLine()) != null) {
-                    if (line != null) {
-                        System.out.println("SERVER LOG: " + line);
-                    }
-                }
+//                String line = "";
+//                while ((line = read.readLine()) != null) {
+//                    if (line != null) {
+//                        System.out.println("SERVER LOG: " + line);
+//                    }
+//                }
 
                 try {
                     process.waitFor();
                 } catch (InterruptedException e) {
                     printError(e.getMessage());
                 }
-                while (read.ready()) {
-                    printDebug(read.readLine());
-                }
+//                while (read.ready()) {
+//                    printDebug(read.readLine());
+//                }
             } catch (IOException e) {
                 printError(e.getMessage());
             }
@@ -109,7 +108,6 @@ public class Server extends Thread {
                 for (String line = br.readLine(); line != null; line = br.readLine()) {
                     System.out.println(line);
                 }
-
     }
 
     public void end() {
