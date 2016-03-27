@@ -511,6 +511,10 @@ public abstract class AppiumHelper {
         }
     }
 
+    public ArrayList<WebElement> getChildrenOfElement(WebElement element) {
+        return getChildrenOfElement(element, true);
+    }
+
     public ArrayList<WebElement> getChildrenOfElement(WebElement element, boolean isElementsDisplayed) {
         String parentXpath = getElementXpath(element);
 

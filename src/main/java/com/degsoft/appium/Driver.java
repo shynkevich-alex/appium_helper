@@ -45,7 +45,7 @@ public class Driver {
                 new Server(serverAddress, serverPort).killAppium();
 
                 DesiredCapabilities serverCapabilities = new DesiredCapabilities();
-                serverCapabilities.setCapability(MobileCapabilityType.NO_RESET, "true");
+                serverCapabilities.setCapability(MobileCapabilityType.NO_RESET, true);
 
                 AppiumServiceBuilder builder = new AppiumServiceBuilder().withCapabilities(serverCapabilities);
                 builder.usingPort(Integer.parseInt(serverPort));
