@@ -1,5 +1,7 @@
 package com.degsoft.utils;
 
+import org.testng.Reporter;
+
 public class LoggerUtil {
     private static boolean isDebug = true;
 
@@ -8,15 +10,17 @@ public class LoggerUtil {
     private static final String DEBUG = "DEBUG:";
 
     public static void printInfo(String logMessage) {
-            System.out.println(INFO + " " + logMessage);
+        System.out.println(INFO + " " + logMessage);
+        Reporter.log(INFO + " " + logMessage);
     }
 
     public static void printError(String logMessage) {
-            System.out.println(ERROR + " " + logMessage);
+        System.out.println(ERROR + " " + logMessage);
+        Reporter.log(ERROR + " " + logMessage);
     }
 
-    public static void printDebug(String logMessage){
-        if(isDebug) {
+    public static void printDebug(String logMessage) {
+        if (isDebug) {
             System.out.println(DEBUG + " " + logMessage);
         }
     }
