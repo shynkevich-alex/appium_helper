@@ -10,7 +10,7 @@ import org.openqa.selenium.WebElement;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.degsoft.utils.LoggerUtil.printDebug;
+import static com.degsoft.appium.LoggerUtil.printDebug;
 
 public class IOSHelper extends AppiumHelper {
 

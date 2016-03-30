@@ -11,5 +11,4 @@ repositories {
 
 dependencies {
     compile 'io.appium:java-client:3.4.0'
-    compile 'org.testng:testng:6.9.10'
 }

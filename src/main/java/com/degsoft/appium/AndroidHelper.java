@@ -1,7 +1,6 @@
 package com.degsoft.appium;
 
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.ios.IOSElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
@@ -10,7 +9,7 @@ import org.openqa.selenium.WebElement;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.degsoft.utils.LoggerUtil.printDebug;
+import static com.degsoft.appium.LoggerUtil.printDebug;
 
 public class AndroidHelper extends AppiumHelper {
 

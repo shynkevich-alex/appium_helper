@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.degsoft.utils.LoggerUtil.*;
+import static com.degsoft.appium.LoggerUtil.*;
 
 public abstract class AppiumHelper {
 
