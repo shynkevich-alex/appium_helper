@@ -52,8 +52,8 @@ public class Driver {
                 service.start();
 
                 long startTime = System.currentTimeMillis();
-                while (!service.isRunning()){
-                    if (System.currentTimeMillis() - startTime > 20000){
+                while (!service.isRunning()) {
+                    if (System.currentTimeMillis() - startTime > 20000) {
                         throw new Exception("Driver was not initialised");
                     }
                 }
@@ -61,25 +61,27 @@ public class Driver {
                 printInfo("Appium server started.");
 
             }
-
             URL url = new URL("http://" + serverAddress + ":" + serverPort + "/wd/hub");
 
-            String platform = desiredCapabilities.getCapability(CapabilityType.PLATFORM).toString();
-            printInfo("Platform: " + platform);
+            driver = new AndroidDriver(url, desiredCapabilities);
 
-            switch (platform.toLowerCase()) {
-                case "android":
-                    printInfo("Create ANDROID driver");
-                    driver = new AndroidDriver(url, desiredCapabilities);
-                    break;
-
-                case "ios":
-                    printInfo("Create iOS driver");
-                    driver = new IOSDriver(url, desiredCapabilities);
-                    break;
-                default:
-                    break;
-            }
+//
+//            String platform = desiredCapabilities.getCapability(CapabilityType.PLATFORM).toString();
+//            printInfo("Platform: " + platform);
+//
+//            switch (platform.toLowerCase()) {
+//                case "android":
+//                    printInfo("Create ANDROID driver");
+//                    driver = new AndroidDriver(url, desiredCapabilities);
+//                    break;
+//
+//                case "ios":
+//                    printInfo("Create iOS driver");
+//                    driver = new IOSDriver(url, desiredCapabilities);
+//                    break;
+//                default:
+//                    break;
+//            }
 
         } catch (Exception e) {
             e.printStackTrace();

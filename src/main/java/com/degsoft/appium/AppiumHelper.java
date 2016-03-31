@@ -2,6 +2,7 @@ package com.degsoft.appium;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
+import io.appium.java_client.TouchAction;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.Dimension;
@@ -178,6 +179,20 @@ public abstract class AppiumHelper {
     }
 
     public abstract WebElement findElementByText(String className, String text, boolean isElementDisplayed);
+
+    public WebElement findElementByIdAndText(String id, String text, boolean isElementDisplayed){
+        List<WebElement> elements = findElementsById(id, isElementDisplayed);
+
+        if (elements == null && elements.size() == 0)
+            return null;
+
+        for (WebElement element: elements){
+            if (getTextOfElement(element).equals(text)){
+                return element;
+            }
+        }
+        return null;
+    }
 
     public WebElement findElementById(String id) {
         return findElementById(id, true);
@@ -359,6 +374,24 @@ public abstract class AppiumHelper {
             if (parent != null) {
                 element = findElementByText(parent, name, isElementDisplayed);
             }
+        }
+        return element;
+    }
+
+    public WebElement waitForElementByIdAndText(String id, String text, long timeMs) {
+        return waitForElementByIdAndText(id, text, timeMs, true);
+    }
+
+    public WebElement waitForElementByIdAndText(String id, String text, long timeMs, boolean isElementDisplayed) {
+        long waiterStartTime = System.currentTimeMillis();
+
+        WebElement element = findElementByIdAndText(id, text, isElementDisplayed);
+        while (element == null) {
+            if (System.currentTimeMillis() - waiterStartTime >= timeMs) {
+                printDebug("element by name: \"" + text + "\" was not found.");
+                return null;
+            }
+            element = findElementByIdAndText(id, text, isElementDisplayed);
         }
         return element;
     }
@@ -648,6 +681,23 @@ public abstract class AppiumHelper {
     public void clickOnElement(WebElement element) {
         try {
             element.click();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void longclickOnElement(WebElement element) {
+        try {
+            TouchAction action = new TouchAction(appiumDriver);
+            action.longPress(element).release().perform();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void longclickOnElement(WebElement element, int duration) {
+        try {
+            TouchAction action = new TouchAction(appiumDriver);
+            action.longPress(element, duration).release().perform();
         } catch (Exception e) {
             e.printStackTrace();
         }
