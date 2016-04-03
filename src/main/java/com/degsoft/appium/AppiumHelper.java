@@ -114,7 +114,7 @@ public abstract class AppiumHelper {
         return webElements;
     }
 
-    public List<WebElement> findElementsByText(String text){
+    public List<WebElement> findElementsByText(String text) {
         return findElementsByText(text, true);
     }
 
@@ -168,7 +168,7 @@ public abstract class AppiumHelper {
 
     public abstract WebElement findElementByText(String text, boolean isElementDisplayed);
 
-    public WebElement findElementByText(WebElement parent, String text){
+    public WebElement findElementByText(WebElement parent, String text) {
         return findElementByText(parent, text, true);
     }
 
@@ -180,14 +180,14 @@ public abstract class AppiumHelper {
 
     public abstract WebElement findElementByText(String className, String text, boolean isElementDisplayed);
 
-    public WebElement findElementByIdAndText(String id, String text, boolean isElementDisplayed){
+    public WebElement findElementByIdAndText(String id, String text, boolean isElementDisplayed) {
         List<WebElement> elements = findElementsById(id, isElementDisplayed);
 
         if (elements == null && elements.size() == 0)
             return null;
 
-        for (WebElement element: elements){
-            if (getTextOfElement(element).equals(text)){
+        for (WebElement element : elements) {
+            if (getTextOfElement(element).equals(text)) {
                 return element;
             }
         }
@@ -593,15 +593,6 @@ public abstract class AppiumHelper {
         return null;
     }
 
-
-    public String getTextOfWebElement(WebElement webElement) {
-        try {
-            return webElement.getText();
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
     public String getAttributeOfWebElement(WebElement webElement, String attribute) {
         try {
             return webElement.getAttribute(attribute);
@@ -663,7 +654,7 @@ public abstract class AppiumHelper {
         }
     }
 
-    public void setValueInElement(WebElement webElement, String value){
+    public void setValueInElement(WebElement webElement, String value) {
         sendKeysToWebElement(webElement, value);
     }
 
@@ -685,6 +676,7 @@ public abstract class AppiumHelper {
             e.printStackTrace();
         }
     }
+
     public void longclickOnElement(WebElement element) {
         try {
             TouchAction action = new TouchAction(appiumDriver);
@@ -713,20 +705,20 @@ public abstract class AppiumHelper {
   Method returns not 100% xpath value.
   Use carefully.
    */
-   protected abstract String getElementXpath(WebElement parent);
+    protected abstract String getElementXpath(WebElement parent);
 
   /*
     Info
      */
 
-    public void printElementInfo(WebElement element){
-        if (element == null){
+    public void printElementInfo(WebElement element) {
+        if (element == null) {
             printDebug("Provided Element is NULL");
         }
 
         printDebug("**********\n" +
                 "TagName : " + getTagNameOfWebElement(element) + " \n" +
-                "Value (text) : " + getTextOfWebElement(element) + " \n" +
+                "Value (text) : " + getTextOfElement(element) + " \n" +
                 "Label : " + getAttributeOfWebElement(element, "label") + " \n" +
                 "Is Displayed : " + isElementDisplayed(element) + " \n" +
                 "Location : " + "x=" + getLocationOfElement(element).getX() + " y=" + getLocationOfElement(element).getY() + " \n" +
@@ -742,7 +734,7 @@ public abstract class AppiumHelper {
      ***/
     public boolean compareTwoImages(String img1path, String img2path) {
         if (!new File(img1path).exists() || !new File(img2path).exists()) {
-            printError("Some of screenshots not found:\n" +           img1path + "\n" + img2path);
+            printError("Some of screenshots not found:\n" + img1path + "\n" + img2path);
             return false;
         }
         Image image1 = Toolkit.getDefaultToolkit().getImage(img1path);
@@ -775,5 +767,58 @@ public abstract class AppiumHelper {
             e1.printStackTrace();
         }
         return false;
+    }
+
+    //SWITCH CONTEXT
+
+    public enum Context {NATIVE, WEBVIEW}
+
+    public void printContexts() {
+        for (String contextName : appiumDriver.getContextHandles()) {
+            printInfo(contextName);
+        }
+    }
+
+    public void switchContext(Context context) {
+
+        for (String contextName : appiumDriver.getContextHandles()) {
+            printInfo(contextName);
+
+            if (contextName.toLowerCase().contains(context.name().toLowerCase())) {
+                appiumDriver.context(contextName);
+                printInfo("Switched to " + contextName);
+                return;
+            }
+        }
+        printError("Context \"" + context.name() + "\" not found");
+    }
+
+    public void switchContext(String context) {
+
+        for (String contextName : appiumDriver.getContextHandles()) {
+            printInfo(contextName);
+
+            if (contextName.toLowerCase().equals(context.toLowerCase())) {
+                appiumDriver.context(contextName);
+                printInfo("Switched to " + contextName);
+                return;
+            }
+        }
+        printError("Context \"" + context + "\" not found");
+    }
+
+    public String getPageSource() {
+        String pageSource = "";
+
+        try {
+            pageSource = appiumDriver.getPageSource();
+        } catch (WebDriverException e) {
+            e.printStackTrace();
+        }
+        return pageSource;
+    }
+
+    public void printPageSource() {
+        printInfo(getPageSource());
     }
 }

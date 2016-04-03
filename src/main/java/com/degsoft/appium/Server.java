@@ -33,7 +33,7 @@ It is allowed now run appium server via capabilitys in 3.4.0 lib
             if (isRunning()) {
                 System.out.println("Appium server is already running! Stopping it...");
 
-                killAppium();
+                killAppiumServer();
                 while (isRunning()) ;
                 printDebug("Appium server stopped.");
             }
@@ -104,7 +104,7 @@ It is allowed now run appium server via capabilitys in 3.4.0 lib
         return true;
     }
 
-    public void killAppium() throws IOException {
+    public void killAppiumServer() throws IOException {
         String [] command;
         if(System.getProperty("os.name").toLowerCase().contains("windows")){
             command = new String []{"taskkill", "/F", "/IM", "node.exe"};

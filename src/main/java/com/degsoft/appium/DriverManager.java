@@ -15,29 +15,27 @@ import java.net.URL;
 import static com.degsoft.appium.LoggerUtil.*;
 
 
-public class Driver {
-    private static AppiumDriver driver;
-    private static AppiumDriverLocalService service;
-    private static boolean isRunServer;
+public class DriverManager {
+    private AppiumDriver driver;
+    private AppiumDriverLocalService service;
+    private boolean isRunServer;
+    private String serverAddress;
+    private String serverPort;
+    private DesiredCapabilities desiredCapabilities;
 
-    public static AppiumDriver getInstance(boolean startServer, String serverAddress, String serverPort, DesiredCapabilities desiredCapabilities) {
-
-        if (driver == null) {
-            isRunServer = startServer;
-            driver = createDriver(isRunServer, serverAddress, serverPort, desiredCapabilities);
-        }
-        return driver;
+    public DriverManager(boolean runAppiumServer, String serverAddress, String serverPort, DesiredCapabilities desiredCapabilities) {
+        this.isRunServer = runAppiumServer;
+        this.serverAddress = serverAddress;
+        this.serverPort = serverPort;
+        this.desiredCapabilities = desiredCapabilities;
     }
 
-    public static AppiumDriver createDriver(boolean isRunServer, String serverAddress,
-                                            String serverPort, DesiredCapabilities desiredCapabilities) {
-        AppiumDriver driver = null;
-
+    public AppiumDriver createAppiumDriver() {
         try {
 
             if (isRunServer) {
 
-                new Server(serverAddress, serverPort).killAppium();
+                new Server(serverAddress, serverPort).killAppiumServer();
 
                 DesiredCapabilities serverCapabilities = new DesiredCapabilities();
                 serverCapabilities.setCapability(MobileCapabilityType.NO_RESET, true);
@@ -54,34 +52,32 @@ public class Driver {
                 long startTime = System.currentTimeMillis();
                 while (!service.isRunning()) {
                     if (System.currentTimeMillis() - startTime > 20000) {
-                        throw new Exception("Driver was not initialised");
+                        throw new Exception("DriverManager was not initialised");
                     }
                 }
 
                 printInfo("Appium server started.");
 
             }
+
             URL url = new URL("http://" + serverAddress + ":" + serverPort + "/wd/hub");
 
-            driver = new AndroidDriver(url, desiredCapabilities);
+            String platform = desiredCapabilities.getCapability(CapabilityType.PLATFORM).toString();
+            printInfo("Platform: " + platform);
 
-//
-//            String platform = desiredCapabilities.getCapability(CapabilityType.PLATFORM).toString();
-//            printInfo("Platform: " + platform);
-//
-//            switch (platform.toLowerCase()) {
-//                case "android":
-//                    printInfo("Create ANDROID driver");
-//                    driver = new AndroidDriver(url, desiredCapabilities);
-//                    break;
-//
-//                case "ios":
-//                    printInfo("Create iOS driver");
-//                    driver = new IOSDriver(url, desiredCapabilities);
-//                    break;
-//                default:
-//                    break;
-//            }
+            switch (platform.toLowerCase()) {
+                case "android":
+                    printInfo("Create ANDROID driver");
+                    driver = new AndroidDriver(url, desiredCapabilities);
+                    break;
+
+                case "ios":
+                    printInfo("Create iOS driver");
+                    driver = new IOSDriver(url, desiredCapabilities);
+                    break;
+                default:
+                    break;
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,12 +93,11 @@ public class Driver {
         return driver;
     }
 
-    public static void quit() {
+    public void quitAppiumDriver() {
         if (driver != null) {
             driver.quit();
-            driver = null;
 
-            if (isRunServer && service != null) {
+            if (service != null) {
                 service.stop();
             }
         }
